@@ -3,40 +3,41 @@
 import { useState } from 'react';
 import './styles.css';
 
-const prospects = [
-  {
-    name: 'Sarah Chen',
-    role: 'VP, Digital Marketing',
-    initials: 'SC',
-    why: 'Owns the digital acquisition surface where organic discovery, content performance, and AI search visibility converge.',
-    relevance: 'High — AI search is becoming a new discovery layer for buyers. Her remit makes her a likely owner or influencer of an AEO/GEO initiative.',
-    angle: '“Sarah, your team already owns how prospects discover the brand through search. We found a few places where AI answers could be steering that discovery elsewhere.”',
-  },
-  {
-    name: 'Michael Rodriguez',
-    role: 'Head of Content & SEO',
-    initials: 'MR',
-    why: 'Directly responsible for the content and search strategy that feeds both traditional search and AI-generated answers.',
-    relevance: 'Very high — AEO/GEO sits directly alongside his existing SEO and content responsibilities, making him an ideal technical champion.',
-    angle: '“Michael, SEO gets you ranked; AEO increasingly determines whether AI assistants mention you at all. We mapped a few gaps in your current content footprint.”',
-  },
-  {
-    name: 'Priya Nair',
-    role: 'Director, Growth Marketing',
-    initials: 'PN',
-    why: 'Leads growth programs and is accountable for measurable pipeline from digital channels.',
-    relevance: 'Medium-high — likely to care about AEO when it can be tied to incremental qualified demand, category visibility, and pipeline.',
-    angle: '“Priya, we’re seeing AI answers become an overlooked acquisition channel. I’d love to show you where your brand is currently winning — and losing — those recommendations.”',
-  },
-];
+function initials(name) {
+  return name.split(' ').filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase();
+}
 
 export default function Home() {
-  const [company, setCompany] = useState('Acme');
-  const [searched, setSearched] = useState(false);
+  const [company, setCompany] = useState('');
+  const [prospects, setProspects] = useState([]);
+  const [searchedCompany, setSearchedCompany] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    if (company.trim()) setSearched(true);
+    const name = company.trim();
+    if (!name || loading) return;
+
+    setLoading(true);
+    setError('');
+    setProspects([]);
+    setSearchedCompany(name);
+
+    try {
+      const response = await fetch('/api/prospects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ company: name }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Could not research this company.');
+      setProspects(data.prospects || []);
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -54,38 +55,54 @@ export default function Home() {
         <form className="search" onSubmit={handleSubmit}>
           <div className="input-wrap">
             <label htmlFor="company">Target company</label>
-            <input id="company" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="e.g. Acme" />
+            <input id="company" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="e.g. HubSpot" />
           </div>
-          <button type="submit">Find Prospects <span>→</span></button>
+          <button type="submit" disabled={loading || !company.trim()}>
+            {loading ? 'Researching…' : 'Find Prospects'} <span>→</span>
+          </button>
         </form>
-        <div className="hint">Try the example: <strong>Acme</strong></div>
+        <div className="hint">Try a real company: <strong>HubSpot</strong></div>
       </section>
 
-      {searched && (
+      {loading && (
+        <section className="empty"><div className="empty-icon">✦</div><p>Researching {searchedCompany} and finding relevant marketing people…</p></section>
+      )}
+
+      {!loading && error && (
+        <section className="empty"><div className="empty-icon">!</div><p>{error}</p></section>
+      )}
+
+      {!loading && !error && searchedCompany && (
         <section className="results">
           <div className="results-head">
-            <div><div className="eyebrow">PROSPECTS FOUND</div><h2>Who to reach at {company}</h2></div>
-            <span className="count">3 relevant prospects</span>
+            <div><div className="eyebrow">PROSPECTS FOUND</div><h2>Who to reach at {searchedCompany}</h2></div>
+            <span className="count">{prospects.length} relevant prospects</span>
           </div>
-          <div className="cards">
-            {prospects.map((p, i) => (
-              <article className="card" key={p.name}>
-                <div className="card-top">
-                  <div className="avatar">{p.initials}</div>
-                  <div><h3>{p.name}</h3><p className="role">{p.role}</p></div>
-                  <span className={`priority p${i}`}>{i === 1 ? 'Very relevant' : i === 0 ? 'High relevance' : 'Relevant'}</span>
-                </div>
-                <div className="detail"><span>WHY THIS PERSON</span><p>{p.why}</p></div>
-                <div className="detail"><span>AEO CONTEXT</span><p>{p.relevance}</p></div>
-                <div className="angle"><span>OUTREACH ANGLE</span><p>{p.angle}</p></div>
-              </article>
-            ))}
-          </div>
-          <p className="disclaimer">Sample data for MVP validation · No external enrichment or integrations are connected yet.</p>
+
+          {prospects.length > 0 ? (
+            <div className="cards">
+              {prospects.map((p, i) => (
+                <article className="card" key={`${p.name}-${i}`}>
+                  <div className="card-top">
+                    <div className="avatar">{initials(p.name)}</div>
+                    <div><h3>{p.name}</h3><p className="role">{p.role}</p></div>
+                    <span className={`priority p${i}`}>{p.confidence || 'Relevant'}</span>
+                  </div>
+                  <div className="detail"><span>WHY THIS PERSON</span><p>{p.why}</p></div>
+                  <div className="detail"><span>AEO CONTEXT</span><p>{p.relevance}</p></div>
+                  <div className="angle"><span>OUTREACH ANGLE</span><p>{p.angle}</p></div>
+                  <div className="source"><span>SOURCE</span> <a href={p.sourceUrl} target="_blank" rel="noreferrer">View evidence ↗</a></div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="empty"><div className="empty-icon">?</div><p>No well-supported marketing prospects were found. Try the company name again.</p></div>
+          )}
+          <p className="disclaimer">Research based on publicly available web evidence · AI-generated summaries should be verified before outreach.</p>
         </section>
       )}
 
-      {!searched && <div className="empty"><div className="empty-icon">✦</div><p>Your prospect intelligence will appear here.</p></div>}
+      {!searchedCompany && !loading && <div className="empty"><div className="empty-icon">✦</div><p>Your prospect intelligence will appear here.</p></div>}
     </main>
   );
 }
