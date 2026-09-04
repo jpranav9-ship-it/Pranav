@@ -1,14 +1,41 @@
 import { NextResponse } from 'next/server';
+import { ConvexHttpClient } from 'convex/browser';
+import { anyApi } from 'convex/server';
+import { randomUUID } from 'crypto';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
 
+const SEARCH_LIMIT = 5;
+const USER_COOKIE = 'aeo_anon_id';
+
+function getConvexClient() {
+  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (!url) throw new Error('Convex is not configured yet.');
+  return new ConvexHttpClient(url);
+}
+
+function getOrCreateAnonymousId(request) {
+  return request.cookies.get(USER_COOKIE)?.value || randomUUID();
+}
+
+function withUserCookie(response, anonymousId, isNew) {
+  if (isNew) {
+    response.cookies.set(USER_COOKIE, anonymousId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 365,
+      path: '/',
+    });
+  }
+  return response;
+}
+
 async function tavilySearch(query, apiKey) {
   const response = await fetch('https://api.tavily.com/search', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       api_key: apiKey,
       query,
@@ -19,10 +46,7 @@ async function tavilySearch(query, apiKey) {
     }),
   });
 
-  if (!response.ok) {
-    throw new Error(`Tavily search failed (${response.status})`);
-  }
-
+  if (!response.ok) throw new Error(`Tavily search failed (${response.status})`);
   return response.json();
 }
 
@@ -45,9 +69,7 @@ async function callGemini(model, prompt, apiKey) {
       },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          responseMimeType: 'application/json',
-        },
+        generationConfig: { responseMimeType: 'application/json' },
       }),
     }
   );
@@ -58,12 +80,10 @@ async function callGemini(model, prompt, apiKey) {
     error.status = response.status;
     throw error;
   }
-
   return response.json();
 }
 
 async function generateResearch(prompt, apiKey) {
-  // Flash-Lite is optimized for high-volume tasks. Fall back to 3.6 if it is temporarily unavailable.
   const models = ['gemini-3.1-flash-lite', 'gemini-3.6-flash'];
   let lastError;
 
@@ -83,23 +103,38 @@ async function generateResearch(prompt, apiKey) {
 }
 
 export async function POST(request) {
+  let anonymousId = '';
+  let reserved = false;
+
   try {
     const { company } = await request.json();
     const name = String(company || '').trim();
 
-    if (!name) {
-      return NextResponse.json({ error: 'Please enter a company name.' }, { status: 400 });
-    }
+    if (!name) return NextResponse.json({ error: 'Please enter a company name.' }, { status: 400 });
 
     const tavilyKey = process.env.TAVILY_API_KEY;
     const geminiKey = process.env.GEMINI_API_KEY;
-
     if (!tavilyKey || !geminiKey) {
       return NextResponse.json(
         { error: 'The research service is not configured yet. Please add the API keys in Vercel and redeploy.' },
         { status: 500 }
       );
     }
+
+    anonymousId = getOrCreateAnonymousId(request);
+    const isNewUser = !request.cookies.get(USER_COOKIE);
+    const convex = getConvexClient();
+    const usage = await convex.mutation(anyApi.usage.reserveSearch, { anonymousId });
+
+    if (!usage.allowed) {
+      const response = NextResponse.json(
+        { error: 'You have used all 5 free searches. Want more? Join the waitlist.', limitReached: true, remaining: 0 },
+        { status: 429 }
+      );
+      return withUserCookie(response, anonymousId, isNewUser);
+    }
+
+    reserved = true;
 
     const queries = [
       `"${name}" marketing leadership VP Head Director Growth Product Marketing Demand Generation SEO`,
@@ -109,7 +144,6 @@ export async function POST(request) {
 
     const searches = await Promise.all(queries.map((query) => tavilySearch(query, tavilyKey)));
     const evidence = searches.flatMap(cleanResults);
-
     const uniqueEvidence = Array.from(
       new Map(evidence.filter((item) => item.url).map((item) => [item.url, item])).values()
     ).slice(0, 18);
@@ -148,8 +182,23 @@ export async function POST(request) {
           }))
       : [];
 
-    return NextResponse.json({ company: name, prospects, sourceCount: uniqueEvidence.length });
+    const response = NextResponse.json({
+      company: name,
+      prospects,
+      sourceCount: uniqueEvidence.length,
+      remaining: usage.remaining,
+    });
+    return withUserCookie(response, anonymousId, isNewUser);
   } catch (error) {
+    if (reserved && anonymousId && process.env.NEXT_PUBLIC_CONVEX_URL) {
+      try {
+        const convex = getConvexClient();
+        await convex.mutation(anyApi.usage.refundSearch, { anonymousId });
+      } catch (refundError) {
+        console.error('Could not refund failed search:', refundError);
+      }
+    }
+
     console.error('Prospect research error:', error);
     return NextResponse.json(
       { error: error.message || 'Something went wrong while researching the company.' },
