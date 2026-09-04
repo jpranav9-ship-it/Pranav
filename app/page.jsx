@@ -99,9 +99,9 @@ export default function Home() {
       </nav>
 
       <section className="hero">
-        <div className="eyebrow">PROSPECT INTELLIGENCE FOR AEO/GEO TEAMS</div>
-        <h1>Find the right marketing people at your <em>target accounts.</em></h1>
-        <p className="subhead">Built for founders, salespeople, and marketers selling AEO/GEO products. Enter a company to find relevant marketing prospects, why they matter, and the outreach angle worth testing.</p>
+        <div className="eyebrow">PROSPECT INTELLIGENCE FOR AEO/GEO PRODUCT BUILDERS</div>
+        <h1>Find the right marketing people who work on <em>AI search.</em></h1>
+        <p className="subhead">Built for founders, sales teams, and marketers selling AEO/GEO products. Enter a target company and discover the marketing people most relevant to AI search — why they matter, and how to approach them.</p>
 
         <form className="search" onSubmit={handleSubmit}>
           <div className="input-wrap">
