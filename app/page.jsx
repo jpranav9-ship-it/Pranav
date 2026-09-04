@@ -99,9 +99,9 @@ export default function Home() {
       </nav>
 
       <section className="hero">
-        <div className="eyebrow">PROSPECT INTELLIGENCE FOR AEO</div>
-        <h1>Find the people who should care about <em>AI search.</em></h1>
-        <p className="subhead">Enter a company. Get the marketing prospects, why they matter, and the outreach angle worth testing.</p>
+        <div className="eyebrow">PROSPECT INTELLIGENCE FOR AEO/GEO TEAMS</div>
+        <h1>Find the right marketing people at your <em>target accounts.</em></h1>
+        <p className="subhead">Built for founders, salespeople, and marketers selling AEO/GEO products. Enter a company to find relevant marketing prospects, why they matter, and the outreach angle worth testing.</p>
 
         <form className="search" onSubmit={handleSubmit}>
           <div className="input-wrap">
@@ -120,32 +120,34 @@ export default function Home() {
         <section className="empty"><div className="empty-icon">✦</div><p>Researching {searchedCompany} and finding relevant marketing people…</p></section>
       )}
 
-      {!loading && error && (
+      {!loading && error && !limitReached && (
+        <section className="empty"><div className="empty-icon">!</div><p>{error}</p></section>
+      )}
+
+      {!loading && limitReached && (
         <section className="empty">
-          <div className="empty-icon">!</div>
-          <p>{error}</p>
-          {limitReached && (
-            <div className="waitlist-box">
-              <h3>Want more?</h3>
-              <p>Join the waitlist and we’ll let you know when more searches are available.</p>
-              <form className="waitlist-form" onSubmit={handleWaitlist}>
-                <input
-                  type="email"
-                  value={waitlistEmail}
-                  onChange={(e) => setWaitlistEmail(e.target.value)}
-                  placeholder="you@company.com"
-                  aria-label="Email address"
-                  required
-                />
-                <button type="submit" disabled={joiningWaitlist}>{joiningWaitlist ? 'Joining…' : 'Join the waitlist'}</button>
-              </form>
-              {waitlistStatus && <div className="waitlist-status">{waitlistStatus}</div>}
-            </div>
-          )}
+          <div className="empty-icon">✓</div>
+          <p><strong>You’ve used all 5 free searches.</strong></p>
+          <div className="waitlist-box">
+            <h3>Want more?</h3>
+            <p>Join the waitlist and we’ll let you know when more searches are available.</p>
+            <form className="waitlist-form" onSubmit={handleWaitlist}>
+              <input
+                type="email"
+                value={waitlistEmail}
+                onChange={(e) => setWaitlistEmail(e.target.value)}
+                placeholder="you@company.com"
+                aria-label="Email address"
+                required
+              />
+              <button type="submit" disabled={joiningWaitlist}>{joiningWaitlist ? 'Joining…' : 'Join the waitlist'}</button>
+            </form>
+            {waitlistStatus && <div className="waitlist-status">{waitlistStatus}</div>}
+          </div>
         </section>
       )}
 
-      {!loading && !error && searchedCompany && (
+      {!loading && !error && !limitReached && searchedCompany && (
         <section className="results">
           <div className="results-head">
             <div><div className="eyebrow">PROSPECTS FOUND</div><h2>Who to reach at {searchedCompany}</h2></div>
@@ -175,7 +177,7 @@ export default function Home() {
         </section>
       )}
 
-      {!searchedCompany && !loading && <div className="empty"><div className="empty-icon">✦</div><p>Your prospect intelligence will appear here.</p></div>}
+      {!searchedCompany && !loading && !limitReached && <div className="empty"><div className="empty-icon">✦</div><p>Your prospect intelligence will appear here.</p></div>}
     </main>
   );
 }
