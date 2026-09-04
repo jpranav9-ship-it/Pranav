@@ -73,7 +73,7 @@ export async function POST(request) {
     const prompt = `You are an AEO prospect research assistant.\n\nTarget company: ${name}\n\nUse ONLY the public web evidence below. Do not invent people, roles, companies, facts, or URLs. If a person's name or role is not supported by the evidence, do not include that person. Prefer real marketing decision-makers such as VP/Head/Director of Marketing, Growth, Demand Generation, Product Marketing, Content, or SEO.\n\nReturn 2-3 prospects if the evidence supports them. If fewer than 2 are supported, return fewer. It is better to return fewer prospects than fabricated ones.\n\nFor each prospect return:\n- name\n- role\n- why: one sentence explaining why this person is a relevant marketing prospect\n- relevance: one sentence explaining the AEO/GEO relevance of their role\n- angle: one concise outreach angle, grounded in the evidence and clearly framed as a hypothesis rather than a fact\n- sourceUrl: the single strongest source URL supporting the person's identity/role\n- confidence: High, Medium, or Low\n\nReturn ONLY valid JSON in this exact shape:\n{"prospects":[{"name":"...","role":"...","why":"...","relevance":"...","angle":"...","sourceUrl":"https://...","confidence":"High"}]}\n\nWEB EVIDENCE:\n${research}`;
 
     const geminiResponse = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent',
       {
         method: 'POST',
         headers: {
@@ -83,7 +83,6 @@ export async function POST(request) {
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
-            temperature: 0.2,
             responseMimeType: 'application/json',
           },
         }),
