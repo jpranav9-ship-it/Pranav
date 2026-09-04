@@ -26,6 +26,13 @@ button span { margin-left:10px; font-size:18px; }
 .empty { max-width:650px; margin:0 auto 80px; padding:44px; border:1px dashed #cfd8d3; border-radius:16px; text-align:center; color:#89928e; }
 .empty-icon { width:38px; height:38px; margin:0 auto 12px; display:grid; place-items:center; border-radius:50%; background:var(--soft); color:var(--accent); }
 .empty p { margin:0; font-size:14px; }
+.waitlist-box { margin:24px auto 0; max-width:460px; padding:22px; border:1px solid var(--line); border-radius:14px; background:white; text-align:left; }
+.waitlist-box h3 { margin:0 0 6px; font:700 18px Manrope; }
+.waitlist-box p { margin:0 0 14px; color:var(--muted); font-size:12px; line-height:1.5; }
+.waitlist-form { display:flex; gap:8px; }
+.waitlist-form input { min-width:0; flex:1; height:42px; padding:0 12px; border:1px solid #cfd8d3; border-radius:8px; outline:0; font:500 13px 'DM Sans'; }
+.waitlist-form button { min-width:150px; height:42px; padding:0 14px; font-size:12px; }
+.waitlist-status { margin-top:10px; color:var(--accent); font-size:11px; line-height:1.4; }
 .results { max-width:1120px; margin:0 auto; padding:20px 24px 80px; }
 .results-head { display:flex; align-items:end; justify-content:space-between; margin-bottom:22px; }
 h2 { font:700 28px Manrope; letter-spacing:-.03em; margin:8px 0 0; }
@@ -45,4 +52,4 @@ h3 { margin:0; font:700 15px Manrope; letter-spacing:-.02em; }
 .angle span { color:var(--accent); }
 .angle p { color:#28352f; font-size:12px; }
 .disclaimer { margin:20px 0 0; text-align:center; color:#9aa29e; font-size:11px; }
-@media(max-width:800px){ .hero{padding-top:64px}.cards{grid-template-columns:1fr}.results-head{align-items:start;gap:12px;flex-direction:column}.search{flex-direction:column;gap:7px}button{height:48px}.input-wrap{padding:10px 12px}.nav{padding:0 20px} }
+@media(max-width:800px){ .hero{padding-top:64px}.cards{grid-template-columns:1fr}.results-head{align-items:start;gap:12px;flex-direction:column}.search{flex-direction:column;gap:7px}button{height:48px}.input-wrap{padding:10px 12px}.nav{padding:0 20px}.waitlist-form{flex-direction:column}.waitlist-form button{width:100%;} }
