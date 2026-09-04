@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import './styles.css';
 
 const SEARCH_LIMIT = 5;
-const USAGE_KEY = 'aeo-prospect-searches-used';
 
 function initials(name) {
   return name.split(' ').filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase();
@@ -17,10 +16,17 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [searchesUsed, setSearchesUsed] = useState(0);
+  const [waitlistEmail, setWaitlistEmail] = useState('');
+  const [waitlistStatus, setWaitlistStatus] = useState('');
+  const [joiningWaitlist, setJoiningWaitlist] = useState(false);
 
   useEffect(() => {
-    const saved = Number.parseInt(localStorage.getItem(USAGE_KEY) || '0', 10);
-    setSearchesUsed(Number.isFinite(saved) ? Math.min(saved, SEARCH_LIMIT) : 0);
+    fetch('/api/usage')
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (data) setSearchesUsed(Math.min(data.searchCount || 0, SEARCH_LIMIT));
+      })
+      .catch(() => {});
   }, []);
 
   async function handleSubmit(e) {
@@ -29,18 +35,15 @@ export default function Home() {
     if (!name || loading) return;
 
     if (searchesUsed >= SEARCH_LIMIT) {
-      setError('You have used all 5 free searches. More searches will be available in the next version.');
+      setError('You have used all 5 free searches.');
       return;
     }
-
-    const nextUsage = searchesUsed + 1;
-    setSearchesUsed(nextUsage);
-    localStorage.setItem(USAGE_KEY, String(nextUsage));
 
     setLoading(true);
     setError('');
     setProspects([]);
     setSearchedCompany(name);
+    setWaitlistStatus('');
 
     try {
       const response = await fetch('/api/prospects', {
@@ -49,7 +52,11 @@ export default function Home() {
         body: JSON.stringify({ company: name }),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Could not research this company.');
+      if (!response.ok) {
+        if (data.limitReached) setSearchesUsed(SEARCH_LIMIT);
+        throw new Error(data.error || 'Could not research this company.');
+      }
+      setSearchesUsed(SEARCH_LIMIT - (data.remaining ?? 0));
       setProspects(data.prospects || []);
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -58,7 +65,31 @@ export default function Home() {
     }
   }
 
+  async function handleWaitlist(e) {
+    e.preventDefault();
+    if (joiningWaitlist) return;
+    setJoiningWaitlist(true);
+    setWaitlistStatus('');
+
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: waitlistEmail }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Could not join the waitlist.');
+      setWaitlistStatus(data.added ? 'You’re on the list. We’ll let you know when more searches are available.' : 'You’re already on the waitlist.');
+      setWaitlistEmail('');
+    } catch (err) {
+      setWaitlistStatus(err.message || 'Could not join the waitlist.');
+    } finally {
+      setJoiningWaitlist(false);
+    }
+  }
+
   const remaining = SEARCH_LIMIT - searchesUsed;
+  const limitReached = searchesUsed >= SEARCH_LIMIT;
 
   return (
     <main className="page">
@@ -77,8 +108,8 @@ export default function Home() {
             <label htmlFor="company">Target company</label>
             <input id="company" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="e.g. HubSpot" />
           </div>
-          <button type="submit" disabled={loading || !company.trim() || searchesUsed >= SEARCH_LIMIT}>
-            {loading ? 'Researching…' : searchesUsed >= SEARCH_LIMIT ? 'Limit reached' : 'Find Prospects'} <span>→</span>
+          <button type="submit" disabled={loading || !company.trim() || limitReached}>
+            {loading ? 'Researching…' : limitReached ? 'Limit reached' : 'Find Prospects'} <span>→</span>
           </button>
         </form>
         <div className="hint">Try a real company: <strong>HubSpot</strong></div>
@@ -90,7 +121,28 @@ export default function Home() {
       )}
 
       {!loading && error && (
-        <section className="empty"><div className="empty-icon">!</div><p>{error}</p></section>
+        <section className="empty">
+          <div className="empty-icon">!</div>
+          <p>{error}</p>
+          {limitReached && (
+            <div className="waitlist-box">
+              <h3>Want more?</h3>
+              <p>Join the waitlist and we’ll let you know when more searches are available.</p>
+              <form className="waitlist-form" onSubmit={handleWaitlist}>
+                <input
+                  type="email"
+                  value={waitlistEmail}
+                  onChange={(e) => setWaitlistEmail(e.target.value)}
+                  placeholder="you@company.com"
+                  aria-label="Email address"
+                  required
+                />
+                <button type="submit" disabled={joiningWaitlist}>{joiningWaitlist ? 'Joining…' : 'Join the waitlist'}</button>
+              </form>
+              {waitlistStatus && <div className="waitlist-status">{waitlistStatus}</div>}
+            </div>
+          )}
+        </section>
       )}
 
       {!loading && !error && searchedCompany && (
