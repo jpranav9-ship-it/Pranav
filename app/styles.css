@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
+
+:root { --ink:#17201d; --muted:#68736e; --line:#dfe5e1; --paper:#f7f9f7; --white:#fff; --accent:#216b52; --soft:#edf5f0; }
+* { box-sizing:border-box; }
+body { margin:0; color:var(--ink); background:var(--paper); font-family:'DM Sans',sans-serif; }
+.page { min-height:100vh; }
+.nav { height:72px; padding:0 6vw; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); background:rgba(255,255,255,.82); }
+.brand { display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:-.02em; }
+.brand-mark { width:28px; height:28px; border-radius:8px; display:grid; place-items:center; background:var(--ink); color:white; font-family:Manrope; font-weight:800; }
+.beta { font-size:11px; font-weight:700; letter-spacing:.12em; color:var(--muted); border:1px solid var(--line); padding:6px 9px; border-radius:999px; }
+.hero { max-width:920px; margin:0 auto; padding:92px 24px 64px; text-align:center; }
+.eyebrow { font-size:11px; font-weight:700; letter-spacing:.15em; color:var(--accent); }
+h1 { font:800 clamp(42px,6vw,68px)/1.02 Manrope,sans-serif; letter-spacing:-.055em; margin:18px auto 20px; max-width:800px; }
+h1 em { color:var(--accent); font-style:normal; }
+.subhead { max-width:620px; margin:0 auto 36px; color:var(--muted); font-size:17px; line-height:1.6; }
+.search { display:flex; max-width:650px; margin:auto; padding:7px; background:white; border:1px solid #cfd8d3; border-radius:14px; box-shadow:0 8px 30px rgba(20,45,35,.07); text-align:left; }
+.input-wrap { flex:1; padding:7px 12px; }
+.input-wrap label { display:block; font-size:10px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.1em; margin-bottom:3px; }
+.input-wrap input { width:100%; border:0; outline:0; font:500 16px 'DM Sans'; color:var(--ink); background:transparent; }
+button { border:0; border-radius:9px; padding:0 22px; background:var(--ink); color:white; font:700 14px 'DM Sans'; cursor:pointer; min-width:166px; transition:.2s; }
+button:hover { transform:translateY(-1px); background:#0f4d39; }
+button span { margin-left:10px; font-size:18px; }
+.hint { margin-top:12px; font-size:12px; color:#89928e; }
+.empty { max-width:650px; margin:0 auto 80px; padding:44px; border:1px dashed #cfd8d3; border-radius:16px; text-align:center; color:#89928e; }
+.empty-icon { width:38px; height:38px; margin:0 auto 12px; display:grid; place-items:center; border-radius:50%; background:var(--soft); color:var(--accent); }
+.empty p { margin:0; font-size:14px; }
+.results { max-width:1120px; margin:0 auto; padding:20px 24px 80px; }
+.results-head { display:flex; align-items:end; justify-content:space-between; margin-bottom:22px; }
+h2 { font:700 28px Manrope; letter-spacing:-.03em; margin:8px 0 0; }
+.count { font-size:12px; color:var(--muted); }
+.cards { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.card { background:white; border:1px solid var(--line); border-radius:16px; padding:22px; box-shadow:0 5px 18px rgba(20,45,35,.04); }
+.card-top { display:flex; align-items:center; gap:12px; min-height:48px; padding-bottom:19px; border-bottom:1px solid #edf0ee; }
+.avatar { flex:0 0 42px; width:42px; height:42px; border-radius:12px; display:grid; place-items:center; background:var(--soft); color:var(--accent); font:700 13px Manrope; }
+h3 { margin:0; font:700 15px Manrope; letter-spacing:-.02em; }
+.role { margin:3px 0 0; color:var(--muted); font-size:12px; }
+.priority { margin-left:auto; align-self:flex-start; padding:5px 7px; border-radius:6px; background:#f2f5f3; color:#65706b; font-size:9px; font-weight:700; white-space:nowrap; }
+.p1 { background:#e8f3ed; color:var(--accent); }
+.detail { margin-top:19px; }
+.detail span,.angle span { display:block; color:#8a948f; font-size:9px; font-weight:700; letter-spacing:.13em; margin-bottom:7px; }
+.detail p,.angle p { margin:0; color:#48534e; font-size:12px; line-height:1.55; }
+.angle { margin-top:20px; padding:14px; border-radius:10px; background:#f4f7f5; }
+.angle span { color:var(--accent); }
+.angle p { color:#28352f; font-size:12px; }
+.disclaimer { margin:20px 0 0; text-align:center; color:#9aa29e; font-size:11px; }
+@media(max-width:800px){ .hero{padding-top:64px}.cards{grid-template-columns:1fr}.results-head{align-items:start;gap:12px;flex-direction:column}.search{flex-direction:column;gap:7px}button{height:48px}.input-wrap{padding:10px 12px}.nav{padding:0 20px} }
