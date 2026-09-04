@@ -1,7 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './styles.css';
+
+const SEARCH_LIMIT = 5;
+const USAGE_KEY = 'aeo-prospect-searches-used';
 
 function initials(name) {
   return name.split(' ').filter(Boolean).slice(0, 2).map((part) => part[0]).join('').toUpperCase();
@@ -13,11 +16,26 @@ export default function Home() {
   const [searchedCompany, setSearchedCompany] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [searchesUsed, setSearchesUsed] = useState(0);
+
+  useEffect(() => {
+    const saved = Number.parseInt(localStorage.getItem(USAGE_KEY) || '0', 10);
+    setSearchesUsed(Number.isFinite(saved) ? Math.min(saved, SEARCH_LIMIT) : 0);
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
     const name = company.trim();
     if (!name || loading) return;
+
+    if (searchesUsed >= SEARCH_LIMIT) {
+      setError('You have used all 5 free searches. More searches will be available in the next version.');
+      return;
+    }
+
+    const nextUsage = searchesUsed + 1;
+    setSearchesUsed(nextUsage);
+    localStorage.setItem(USAGE_KEY, String(nextUsage));
 
     setLoading(true);
     setError('');
@@ -40,6 +58,8 @@ export default function Home() {
     }
   }
 
+  const remaining = SEARCH_LIMIT - searchesUsed;
+
   return (
     <main className="page">
       <nav className="nav">
@@ -57,11 +77,12 @@ export default function Home() {
             <label htmlFor="company">Target company</label>
             <input id="company" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="e.g. HubSpot" />
           </div>
-          <button type="submit" disabled={loading || !company.trim()}>
-            {loading ? 'Researching…' : 'Find Prospects'} <span>→</span>
+          <button type="submit" disabled={loading || !company.trim() || searchesUsed >= SEARCH_LIMIT}>
+            {loading ? 'Researching…' : searchesUsed >= SEARCH_LIMIT ? 'Limit reached' : 'Find Prospects'} <span>→</span>
           </button>
         </form>
         <div className="hint">Try a real company: <strong>HubSpot</strong></div>
+        <div className="usage">{searchesUsed} of {SEARCH_LIMIT} free searches used · {remaining} remaining</div>
       </section>
 
       {loading && (
