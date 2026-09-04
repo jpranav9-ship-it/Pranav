@@ -34,6 +34,54 @@ function cleanResults(data) {
   }));
 }
 
+async function callGemini(model, prompt, apiKey) {
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey,
+      },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: 'application/json',
+        },
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    const error = new Error(`Gemini request failed (${response.status}): ${errorText.slice(0, 200)}`);
+    error.status = response.status;
+    throw error;
+  }
+
+  return response.json();
+}
+
+async function generateResearch(prompt, apiKey) {
+  // Flash-Lite is optimized for high-volume tasks. Fall back to 3.6 if it is temporarily unavailable.
+  const models = ['gemini-3.1-flash-lite', 'gemini-3.6-flash'];
+  let lastError;
+
+  for (const model of models) {
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        return await callGemini(model, prompt, apiKey);
+      } catch (error) {
+        lastError = error;
+        if (error.status !== 503) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 700));
+      }
+    }
+  }
+
+  throw lastError || new Error('Gemini research service is temporarily unavailable.');
+}
+
 export async function POST(request) {
   try {
     const { company } = await request.json();
@@ -72,29 +120,7 @@ export async function POST(request) {
 
     const prompt = `You are an AEO prospect research assistant.\n\nTarget company: ${name}\n\nUse ONLY the public web evidence below. Do not invent people, roles, companies, facts, or URLs. If a person's name or role is not supported by the evidence, do not include that person. Prefer real marketing decision-makers such as VP/Head/Director of Marketing, Growth, Demand Generation, Product Marketing, Content, or SEO.\n\nReturn 2-3 prospects if the evidence supports them. If fewer than 2 are supported, return fewer. It is better to return fewer prospects than fabricated ones.\n\nFor each prospect return:\n- name\n- role\n- why: one sentence explaining why this person is a relevant marketing prospect\n- relevance: one sentence explaining the AEO/GEO relevance of their role\n- angle: one concise outreach angle, grounded in the evidence and clearly framed as a hypothesis rather than a fact\n- sourceUrl: the single strongest source URL supporting the person's identity/role\n- confidence: High, Medium, or Low\n\nReturn ONLY valid JSON in this exact shape:\n{"prospects":[{"name":"...","role":"...","why":"...","relevance":"...","angle":"...","sourceUrl":"https://...","confidence":"High"}]}\n\nWEB EVIDENCE:\n${research}`;
 
-    const geminiResponse = await fetch(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': geminiKey,
-        },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            responseMimeType: 'application/json',
-          },
-        }),
-      }
-    );
-
-    if (!geminiResponse.ok) {
-      const errorText = await geminiResponse.text();
-      throw new Error(`Gemini request failed (${geminiResponse.status}): ${errorText.slice(0, 200)}`);
-    }
-
-    const geminiData = await geminiResponse.json();
+    const geminiData = await generateResearch(prompt, geminiKey);
     const text = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
     let parsed;
