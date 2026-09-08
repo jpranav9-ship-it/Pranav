@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import '../styles.css';
 
 export default function SignInPage() {
   const router = useRouter();
