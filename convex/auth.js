@@ -1,5 +1,6 @@
 import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
+import bcrypt from 'bcryptjs';
 
 const SESSION_DAYS = 30;
 
@@ -14,13 +15,16 @@ export const register = mutation({
   },
 });
 
-export const getAccount = query({
-  args: { email: v.string() },
+export const login = mutation({
+  args: { email: v.string(), password: v.string(), sessionTokenHash: v.string() },
   handler: async (ctx, args) => {
     const email = args.email.trim().toLowerCase();
     const account = await ctx.db.query('accounts').withIndex('by_email', (q) => q.eq('email', email)).unique();
-    if (!account) return null;
-    return { accountId: account._id, email: account.email, passwordHash: account.passwordHash };
+    if (!account || !(await bcrypt.compare(args.password, account.passwordHash))) throw new Error('Invalid email or password.');
+    const now = Date.now();
+    const expiresAt = now + SESSION_DAYS * 24 * 60 * 60 * 1000;
+    await ctx.db.insert('sessions', { accountId: account._id, tokenHash: args.sessionTokenHash, expiresAt, createdAt: now });
+    return { email: account.email, accountId: account._id, expiresAt };
   },
 });
 
