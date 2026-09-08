@@ -1,4 +1,5 @@
-import { createHash, randomBytes, scryptSync } from 'crypto';
+import { createHash, randomBytes } from 'crypto';
+import bcrypt from 'bcryptjs';
 
 const SESSION_COOKIE = 'aeo_session';
 
@@ -7,16 +8,7 @@ export function normalizeEmail(value) {
 }
 
 export function hashPassword(password) {
-  const salt = randomBytes(16).toString('hex');
-  const derived = scryptSync(password, salt, 64).toString('hex');
-  return `${salt}:${derived}`;
-}
-
-export function verifyPassword(password, stored) {
-  const [salt, expected] = String(stored || '').split(':');
-  if (!salt || !expected) return false;
-  const actual = scryptSync(password, salt, 64).toString('hex');
-  return actual === expected;
+  return bcrypt.hashSync(password, 12);
 }
 
 export function createSessionToken() {
