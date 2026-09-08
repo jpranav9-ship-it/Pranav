@@ -10,27 +10,20 @@ export async function POST(request) {
     const { email, password } = await request.json();
     const normalizedEmail = normalizeEmail(email);
     const plainPassword = String(password || '');
-
-    if (!/^\S+@\S+\.\S+$/.test(normalizedEmail)) {
-      return NextResponse.json({ error: 'Please enter a valid work email.' }, { status: 400 });
-    }
-    if (plainPassword.length < 8) {
-      return NextResponse.json({ error: 'Password must be at least 8 characters.' }, { status: 400 });
-    }
+    if (!/^\S+@\S+\.\S+$/.test(normalizedEmail)) return NextResponse.json({ error: 'Please enter a valid work email.' }, { status: 400 });
+    if (plainPassword.length < 8) return NextResponse.json({ error: 'Password must be at least 8 characters.' }, { status: 400 });
 
     const url = process.env.NEXT_PUBLIC_CONVEX_URL;
     if (!url) throw new Error('Convex is not configured yet.');
     const convex = new ConvexHttpClient(url);
-    const passwordHash = hashPassword(plainPassword);
-    const account = await convex.mutation(anyApi.auth.register, { email: normalizedEmail, passwordHash });
-
     const token = createSessionToken();
-    const session = await convex.mutation(anyApi.auth.createSession, {
-      accountId: account.accountId,
+    const account = await convex.mutation(anyApi.auth.register, {
+      email: normalizedEmail,
+      passwordHash: hashPassword(plainPassword),
       sessionTokenHash: hashSessionToken(token),
     });
 
-    const response = NextResponse.json({ email: session.email });
+    const response = NextResponse.json({ email: account.email });
     return setSessionCookie(response, token);
   } catch (error) {
     console.error('Register error:', error);
