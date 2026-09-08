@@ -5,13 +5,16 @@ import bcrypt from 'bcryptjs';
 const SESSION_DAYS = 30;
 
 export const register = mutation({
-  args: { email: v.string(), passwordHash: v.string() },
+  args: { email: v.string(), passwordHash: v.string(), sessionTokenHash: v.string() },
   handler: async (ctx, args) => {
     const email = args.email.trim().toLowerCase();
     const existing = await ctx.db.query('accounts').withIndex('by_email', (q) => q.eq('email', email)).unique();
     if (existing) throw new Error('An account with this email already exists.');
     const accountId = await ctx.db.insert('accounts', { email, passwordHash: args.passwordHash, createdAt: Date.now() });
-    return { accountId, email };
+    const now = Date.now();
+    const expiresAt = now + SESSION_DAYS * 24 * 60 * 60 * 1000;
+    await ctx.db.insert('sessions', { accountId, tokenHash: args.sessionTokenHash, expiresAt, createdAt: now });
+    return { accountId, email, expiresAt };
   },
 });
 
@@ -24,18 +27,6 @@ export const login = mutation({
     const now = Date.now();
     const expiresAt = now + SESSION_DAYS * 24 * 60 * 60 * 1000;
     await ctx.db.insert('sessions', { accountId: account._id, tokenHash: args.sessionTokenHash, expiresAt, createdAt: now });
-    return { email: account.email, accountId: account._id, expiresAt };
-  },
-});
-
-export const createSession = mutation({
-  args: { accountId: v.id('accounts'), sessionTokenHash: v.string() },
-  handler: async (ctx, args) => {
-    const account = await ctx.db.get(args.accountId);
-    if (!account) throw new Error('Account not found.');
-    const now = Date.now();
-    const expiresAt = now + SESSION_DAYS * 24 * 60 * 60 * 1000;
-    await ctx.db.insert('sessions', { accountId: args.accountId, tokenHash: args.sessionTokenHash, expiresAt, createdAt: now });
     return { email: account.email, accountId: account._id, expiresAt };
   },
 });
