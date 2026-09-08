@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import '../styles.css';
-import './dashboard.css';
 
 export default function DashboardPage() {
   const router = useRouter();
