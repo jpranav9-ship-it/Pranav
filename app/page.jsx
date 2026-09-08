@@ -19,12 +19,20 @@ export default function Home() {
   const [waitlistEmail, setWaitlistEmail] = useState('');
   const [waitlistStatus, setWaitlistStatus] = useState('');
   const [joiningWaitlist, setJoiningWaitlist] = useState(false);
+  const [accountEmail, setAccountEmail] = useState('');
 
   useEffect(() => {
     fetch('/api/usage')
       .then((response) => response.ok ? response.json() : null)
       .then((data) => {
         if (data) setSearchesUsed(Math.min(data.searchCount || 0, SEARCH_LIMIT));
+      })
+      .catch(() => {});
+
+    fetch('/api/auth/me')
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => {
+        if (data?.authenticated) setAccountEmail(data.email);
       })
       .catch(() => {});
   }, []);
@@ -94,8 +102,11 @@ export default function Home() {
   return (
     <main className="page">
       <nav className="nav">
-        <div className="brand"><span className="brand-mark">A</span><span>AEO Prospect Intelligence</span></div>
-        <span className="beta">MVP</span>
+        <a className="brand brand-link" href="/"><span className="brand-mark">A</span><span>AEO Prospect Intelligence</span></a>
+        <div className="nav-actions">
+          <span className="beta">MVP</span>
+          {accountEmail ? <a className="nav-link" href="/dashboard">{accountEmail}</a> : <a className="nav-link signin-link" href="/signin">Sign in</a>}
+        </div>
       </nav>
 
       <section className="hero">
@@ -132,14 +143,7 @@ export default function Home() {
             <h3>Want more?</h3>
             <p>Join the waitlist and we’ll let you know when more searches are available.</p>
             <form className="waitlist-form" onSubmit={handleWaitlist}>
-              <input
-                type="email"
-                value={waitlistEmail}
-                onChange={(e) => setWaitlistEmail(e.target.value)}
-                placeholder="you@company.com"
-                aria-label="Email address"
-                required
-              />
+              <input type="email" value={waitlistEmail} onChange={(e) => setWaitlistEmail(e.target.value)} placeholder="you@company.com" aria-label="Email address" required />
               <button type="submit" disabled={joiningWaitlist}>{joiningWaitlist ? 'Joining…' : 'Join the waitlist'}</button>
             </form>
             {waitlistStatus && <div className="waitlist-status">{waitlistStatus}</div>}
