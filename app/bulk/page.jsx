@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import '../styles.css';
 
 const MAX=25, BATCH=3;
-function parse(text){return text.split(/\r?\n/).map(x=>x.split(',')[0].trim()).filter(Boolean).filter((x,i,a)=>i===0||x.toLowerCase()!=='company'&&a.indexOf(x)===i).slice(0,MAX);}
+function parse(text){const lines=text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);const start=/^(company|company name|company_name|name|website)$/i.test(lines[0]||'')?1:0;return Array.from(new Set(lines.slice(start).map(x=>x.split(',')[0].trim()).filter(Boolean))).slice(0,MAX);}
 function csv(results){const e=v=>`"${String(v??'').replaceAll('"','""')}"`;const rows=[['Company','Prospect','Role','Why this person','AEO context','Outreach angle','Confidence','Source']];results.forEach(r=>r.prospects.length?r.prospects.forEach(p=>rows.push([r.company,p.name,p.role,p.why,p.relevance,p.angle,p.confidence,p.sourceUrl])):rows.push([r.company,'','','','','',r.status==='failed'?'Failed':'No supported prospects',r.error||'']));const blob=new Blob([rows.map(r=>r.map(e).join(',')).join('\n')],{type:'text/csv'});const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='aeo-prospect-research.csv';a.click();URL.revokeObjectURL(u);}
 
 export default function Bulk(){
