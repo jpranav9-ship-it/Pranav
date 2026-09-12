@@ -1,0 +1,1 @@
+export default function sitemap(){const base='https://routeprospect.com';const pages=['/','/resources','/resources/aeo-sales-prospecting','/resources/aeo-sdr-playbook','/resources/ai-search-buyers','/resources/geo-vs-seo-sales','/contact'];return pages.map(path=>({url:`${base}${path}`,lastModified:new Date()}));}
