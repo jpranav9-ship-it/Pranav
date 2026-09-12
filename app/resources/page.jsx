@@ -1,0 +1,19 @@
+import './resources.css';
+
+const resources = [
+  { href: '/resources/aeo-sales-prospecting', tag: 'SALES', title: 'AEO Sales Prospecting: How to Find the Right ICP', description: 'A practical guide to identifying the marketing people most likely to own AEO, GEO, AI search and organic visibility problems.' },
+  { href: '/resources/aeo-sdr-playbook', tag: 'PLAYBOOK', title: 'The AEO SDR Playbook', description: 'What AEO SDRs should research before sending the first message, from account signals to buyer ownership and outreach angles.' },
+  { href: '/resources/ai-search-buyers', tag: 'ICP', title: 'Who Buys AEO and AI Search Services?', description: 'A buyer map for founders, SDRs and agencies selling AEO, GEO and AI-search visibility solutions.' },
+  { href: '/resources/geo-vs-seo-sales', tag: 'GUIDE', title: 'SEO vs GEO: What Changes for Sales Teams?', description: 'Understand the difference between SEO and GEO from a prospecting and buyer-conversation perspective.' },
+];
+
+export const metadata = { title: 'AEO & AI Search Sales Resources | RouteProspect', description: 'Practical guides for AEO, GEO and AI-search sales teams: ICP research, buyer identification, prospecting signals and SDR outreach.' };
+
+export default function ResourcesPage() {
+  return <main className="resources-page">
+    <nav className="nav"><a className="brand brand-link" href="/"><img src="/routeprospect-mark.svg" alt="RouteProspect" width="38" height="38"/><span>RouteProspect</span></a><div className="nav-actions"><a className="nav-link" href="/">Product</a><a className="nav-link" href="/contact">Contact</a></div></nav>
+    <header className="resources-hero"><div className="eyebrow">ROUTEPROSPECT RESOURCES</div><h1>Practical knowledge for teams selling <em>AEO, GEO & AI search.</em></h1><p>Not another glossary. These guides focus on the sales problems behind AI-search products: finding the right ICP, identifying the buyer, spotting account signals and starting a relevant conversation.</p></header>
+    <section className="resource-grid">{resources.map((item) => <a className="resource-card" href={item.href} key={item.href}><span>{item.tag}</span><h2>{item.title}</h2><p>{item.description}</p><b>Read guide →</b></a>)}</section>
+    <section className="resource-cta"><div><div className="eyebrow">THE PRODUCT</div><h2>Research the people. Not just the account.</h2><p>RouteProspect helps AEO/GEO sellers find relevant marketing prospects, understand why they matter and build a better first conversation from public evidence.</p></div><a href="/">Try RouteProspect →</a></section>
+  </main>;
+}
