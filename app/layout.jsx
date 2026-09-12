@@ -2,9 +2,9 @@ import { Analytics } from '@vercel/analytics/next';
 import './styles.css';
 
 export const metadata = {
-  title: 'AEO Prospect Intelligence | Find AEO/GEO Prospects',
-  description: 'Find the marketing people most relevant to AEO, GEO and AI search. Research target companies, understand AEO relevance and get an outreach angle.',
-  keywords: ['AEO prospecting', 'GEO prospecting', 'AI search', 'AEO sales', 'AEO marketing', 'Answer Engine Optimization', 'Generative Engine Optimization'],
+  title: 'RouteProspect | Prospect Intelligence for AEO/GEO Teams',
+  description: 'RouteProspect helps AEO/GEO teams find the right marketing people inside target accounts, understand why they matter, and get a relevant outreach angle.',
+  keywords: ['AEO prospecting', 'GEO prospecting', 'AI search', 'AEO sales', 'AEO marketing', 'prospect intelligence', 'account research'],
 };
 
 export default function RootLayout({ children }) {
