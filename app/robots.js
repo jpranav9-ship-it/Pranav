@@ -1,0 +1,1 @@
+export default function robots(){return{rules:[{userAgent:'*',allow:'/'}],sitemap:'https://routeprospect.com/sitemap.xml',host:'https://routeprospect.com'};}
