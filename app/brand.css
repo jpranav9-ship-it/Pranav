@@ -13,10 +13,10 @@
   --rp-purple: #7561e8;
 }
 body { background: var(--paper); }
-.nav { border-bottom-color: #eee7dc; background: rgba(255,250,241,.88); }
-.brand { gap: 11px; font-family: 'Manrope', sans-serif; font-size: 15px; }
-.brand img { width: 36px; height: 36px; border-radius: 10px !important; }
-.brand > span { letter-spacing: -.035em; }
+.nav { border-bottom-color: #eee7dc; background: rgba(255,250,241,.92); }
+.brand { gap: 12px; font-family: 'Manrope', sans-serif; font-size: 16px; }
+.brand img { width: 44px; height: 44px; border-radius: 12px !important; flex: 0 0 44px; filter: drop-shadow(0 3px 7px rgba(32,37,47,.08)); }
+.brand > span { letter-spacing: -.04em; font-weight: 800; }
 .nav-link:hover { color: var(--accent); }
 .signin-link { border-color: #ded8ce; }
 .hero { padding-top: 86px; }
@@ -52,5 +52,6 @@ h1 em { color: var(--rp-blue); }
 @media (max-width: 560px) {
   .use-case-grid, .cards, .faq-grid { grid-template-columns: 1fr; }
   .hero { padding-top: 62px; }
-  .brand > span { font-size: 14px; }
+  .brand img { width: 40px; height: 40px; flex-basis: 40px; }
+  .brand > span { font-size: 15px; }
 }
