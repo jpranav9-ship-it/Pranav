@@ -1,5 +1,6 @@
 import './resources.css';
 const resources=[
+{href:'/resources/aeo-prospecting-software',tag:'PRODUCT GUIDE',title:'AEO Prospecting Software: What RouteProspect Does',description:'How RouteProspect helps AEO, GEO and AI-search sellers identify relevant marketing buyers, research account signals and build evidence-based outreach.'},
 {href:'/resources/aeo-sales-prospecting',tag:'SALES',title:'AEO Sales Prospecting: How to Find the Right ICP',description:'A practical guide to identifying the marketing people most likely to own AEO, GEO, AI search and organic visibility problems.'},
 {href:'/resources/aeo-sdr-playbook',tag:'PLAYBOOK',title:'The AEO SDR Playbook',description:'What AEO SDRs should research before sending the first message, from account signals to buyer ownership and outreach angles.'},
 {href:'/resources/ai-search-prospecting',tag:'PROSPECTING',title:'AI Search Prospecting: A Practical Guide',description:'How to prospect for AI-search services using account signals, buyer ownership and evidence instead of generic outreach.'},
