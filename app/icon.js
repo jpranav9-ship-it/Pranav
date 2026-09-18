@@ -1,5 +1,7 @@
 import { ImageResponse } from 'next/og';
 
+export const runtime = 'edge';
+
 export const size = {
   width: 96,
   height: 96,
@@ -28,7 +30,7 @@ export default function Icon() {
         <div style={{ position: 'absolute', left: 29, top: 28, width: 29, height: 29, borderRadius: 10, background: '#5CC78A' }} />
         <div style={{ position: 'absolute', left: 25, top: 55, width: 34, height: 7, borderRadius: 4, background: '#18233A', transform: 'rotate(-45deg)' }} />
         <div style={{ position: 'absolute', left: 49, top: 29, width: 7, height: 16, borderRadius: 4, background: '#18233A', transform: 'rotate(-45deg)' }} />
-        <div style={{ position: 'absolute', left: 49, top: 29, width: 15, height: 7, borderRadius: 4, background: '#18233A', transform: 'rotate(0deg)' }} />
+        <div style={{ position: 'absolute', left: 49, top: 29, width: 15, height: 7, borderRadius: 4, background: '#18233A' }} />
         <div style={{ position: 'absolute', left: 70, top: 19, width: 8, height: 8, borderRadius: 999, background: '#FF765C' }} />
       </div>
     ),
