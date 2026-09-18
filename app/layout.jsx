@@ -9,9 +9,9 @@ export const metadata = {
   keywords: ['RouteProspect','AEO prospecting software','AEO sales prospecting','AEO SDR','GEO prospecting','AI search prospecting','AI search sales','AEO ICP','AI search ICP','prospect intelligence','account research','AEO outreach'],
   alternates: { canonical: '/' },
   icons: {
-    icon: '/routeprospect-mark.svg',
-    shortcut: '/routeprospect-mark.svg',
-    apple: '/routeprospect-mark.svg'
+    icon: '/icon',
+    shortcut: '/icon',
+    apple: '/icon'
   },
   openGraph: { title: 'RouteProspect | Prospect Intelligence for AEO, GEO & AI Search', description: 'Prospect intelligence for teams selling AEO, GEO and AI-search products.', url: 'https://routeprospect.com', siteName: 'RouteProspect', type: 'website' },
   twitter: { card: 'summary_large_image', title: 'RouteProspect | Prospect Intelligence for AEO, GEO & AI Search', description: 'Find relevant marketing buyers for AEO, GEO and AI-search products.' },
