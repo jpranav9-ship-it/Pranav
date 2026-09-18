@@ -8,6 +8,11 @@ export const metadata = {
   description: 'RouteProspect is prospect intelligence software for teams selling AEO, GEO and AI-search products. Find relevant marketing buyers, research account signals and build evidence-based outreach angles.',
   keywords: ['RouteProspect','AEO prospecting software','AEO sales prospecting','AEO SDR','GEO prospecting','AI search prospecting','AI search sales','AEO ICP','AI search ICP','prospect intelligence','account research','AEO outreach'],
   alternates: { canonical: '/' },
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
+  },
   openGraph: { title: 'RouteProspect | Prospect Intelligence for AEO, GEO & AI Search', description: 'Prospect intelligence for teams selling AEO, GEO and AI-search products.', url: 'https://routeprospect.com', siteName: 'RouteProspect', type: 'website' },
   twitter: { card: 'summary_large_image', title: 'RouteProspect | Prospect Intelligence for AEO, GEO & AI Search', description: 'Find relevant marketing buyers for AEO, GEO and AI-search products.' },
   robots: { index: true, follow: true },
@@ -20,7 +25,7 @@ export default function RootLayout({ children }) {
     '@id':'https://routeprospect.com/#organization',
     name:'RouteProspect',
     url:'https://routeprospect.com/',
-    logo:'https://routeprospect.com/routeprospect-mark.svg',
+    logo:'https://routeprospect.com/favicon.png',
     email:'j.pranav9@gmail.com',
     description:'Prospect intelligence software for teams selling AEO, GEO and AI-search products.'
   };
