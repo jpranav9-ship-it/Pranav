@@ -1,4 +1,4 @@
-import '../guide.css';
+import '../resources/guide.css';
 
 export const metadata={
   title:'About RouteProspect | AEO, GEO & AI Search Prospect Intelligence',
