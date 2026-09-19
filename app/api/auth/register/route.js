@@ -16,10 +16,14 @@ export async function POST(request) {
     const url = process.env.NEXT_PUBLIC_CONVEX_URL;
     if (!url) throw new Error('Convex is not configured yet.');
     const convex = new ConvexHttpClient(url);
-    const token = createSessionToken();
     const account = await convex.mutation(anyApi.auth.register, {
       email: normalizedEmail,
       passwordHash: hashPassword(plainPassword),
+    });
+
+    const token = createSessionToken();
+    await convex.mutation(anyApi.auth.createSession, {
+      accountId: account.accountId,
       sessionTokenHash: hashSessionToken(token),
     });
 
