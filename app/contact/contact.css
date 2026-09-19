@@ -1,0 +1,21 @@
+.contact-page { min-height:100vh; background:var(--paper); }
+.contact-nav { margin:0; }
+.contact-shell { width:min(920px, calc(100% - 40px)); margin:0 auto; padding:78px 0 100px; }
+.contact-intro { max-width:680px; margin:0 auto 38px; text-align:center; }
+.contact-intro h1 { margin:14px auto 14px; font:800 clamp(42px,6vw,64px)/1.04 Manrope,sans-serif; letter-spacing:-.06em; }
+.contact-intro h1 em { color:var(--rp-blue); font-style:normal; }
+.contact-intro p { max-width:560px; margin:0 auto; color:var(--muted); font-size:16px; line-height:1.65; }
+.contact-grid { display:grid; gap:14px; }
+.contact-card { display:grid; grid-template-columns:48px 1fr 30px; align-items:center; gap:16px; padding:22px; color:var(--ink); text-decoration:none; background:var(--white); border:1px solid #e9e3d9; border-radius:18px; box-shadow:0 8px 24px rgba(70,55,30,.035); transition:transform .18s, box-shadow .18s; }
+.contact-card:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(70,55,30,.08); }
+.contact-icon { width:48px; height:48px; display:grid; place-items:center; border-radius:14px; background:#fff0e9; color:var(--accent); font:800 17px Manrope; }
+.contact-card:nth-child(2) .contact-icon { background:#eaf1ff; color:#3976e8; }
+.whatsapp-card .contact-icon { background:#e8f7ef; color:#24915c; }
+.contact-label { display:block; margin-bottom:5px; color:var(--rp-purple); font-size:9px; font-weight:800; letter-spacing:.14em; }
+.contact-card strong { display:block; font:700 16px Manrope; letter-spacing:-.02em; }
+.contact-card p { margin:5px 0 0; color:var(--muted); font-size:12px; line-height:1.5; }
+.contact-arrow { color:#9aa09c; font-size:20px; }
+.contact-note { margin-top:24px; padding:22px; border-radius:18px; background:#20252f; color:white; text-align:center; }
+.contact-note span { color:var(--rp-yellow); font-size:10px; font-weight:800; letter-spacing:.16em; }
+.contact-note p { margin:7px 0 0; color:#d7dbe1; font-size:13px; }
+@media (max-width:560px) { .contact-shell { padding-top:58px; } .contact-card { grid-template-columns:42px 1fr 22px; gap:12px; padding:17px; } .contact-icon { width:42px; height:42px; } .contact-card strong { font-size:14px; } }
