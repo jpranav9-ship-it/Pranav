@@ -1,5 +1,7 @@
 import './contact.css';
 
+export const metadata={title:'Contact RouteProspect | AEO & GEO Prospecting',description:'Contact RouteProspect for demos, Pro access, product questions and feedback.',alternates:{canonical:'/contact'}};
+
 const PHONE = '+919500145832';
 const DISPLAY_PHONE = '+91 9500145832';
 const WHATSAPP_MESSAGE = encodeURIComponent('Hi Pranav, I would like to know more about RouteProspect.');
