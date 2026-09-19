@@ -1,5 +1,7 @@
 'use client';
 
+export const metadata={robots:{index:false,follow:false}};
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
