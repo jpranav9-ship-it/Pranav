@@ -9,6 +9,8 @@ export default function sitemap() {
     ['/resources/aeo-prospecting-software', 'monthly'],
     ['/resources/aeo-sales-prospecting', 'monthly'],
     ['/resources/aeo-sdr-playbook', 'monthly'],
+    ['/resources/aeo-agency-client-acquisition', 'monthly'],
+    ['/resources/ai-search-prospecting-workflow', 'monthly'],
     ['/resources/ai-search-prospecting', 'monthly'],
     ['/resources/ai-search-buyers', 'monthly'],
     ['/resources/geo-vs-seo-sales', 'monthly'],
