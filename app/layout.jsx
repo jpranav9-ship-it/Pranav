@@ -5,7 +5,7 @@ import './brand.css';
 export const metadata = {
   metadataBase: new URL('https://routeprospect.com'),
   title: { default: 'RouteProspect | Prospect Intelligence for AEO, GEO & AI Search', template: '%s | RouteProspect' },
-  description: 'RouteProspect is prospect intelligence software for teams selling AEO, GEO and AI-search products. Find relevant marketing buyers, research account signals and build evidence-based outreach angles.',
+  description: 'Find prospects for AEO/GEO agencies and AI-search products. RouteProspect helps agency owners, founders and SDRs identify relevant marketing buyers, research account signals and personalize outreach.',
   keywords: ['RouteProspect','AEO prospecting software','AEO sales prospecting','AEO SDR','GEO prospecting','AI search prospecting','AI search sales','AEO ICP','AI search ICP','prospect intelligence','account research','AEO outreach'],
   alternates: { canonical: '/' },
   icons: {
@@ -13,9 +13,9 @@ export const metadata = {
     shortcut: '/favicon.png',
     apple: '/favicon.png',
   },
-  openGraph: { title: 'RouteProspect | Prospect Intelligence for AEO, GEO & AI Search', description: 'Prospect intelligence for teams selling AEO, GEO and AI-search products.', url: 'https://routeprospect.com', siteName: 'RouteProspect', type: 'website' },
+  openGraph: { title: 'RouteProspect | Prospect Intelligence for AEO, GEO & AI Search', description: 'Find prospects for AEO/GEO agencies and AI-search products. Identify relevant marketing buyers, research account signals and personalize outreach.', url: 'https://routeprospect.com', siteName: 'RouteProspect', type: 'website' },
   twitter: { card: 'summary_large_image', title: 'RouteProspect | Prospect Intelligence for AEO, GEO & AI Search', description: 'Find relevant marketing buyers for AEO, GEO and AI-search products.' },
-  robots: { index: true, follow: true },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-snippet': -1 } },
 };
 
 export default function RootLayout({ children }) {
@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
     url:'https://routeprospect.com/',
     logo:'https://routeprospect.com/favicon.png',
     email:'j.pranav9@gmail.com',
-    description:'Prospect intelligence software for teams selling AEO, GEO and AI-search products.'
+    description:'Find prospects for AEO/GEO agencies and AI-search products. Identify relevant marketing buyers, research account signals and personalize outreach.'
   };
   const website = {
     '@context':'https://schema.org',
