@@ -43,7 +43,7 @@ export default function ApiDocsPage() {
       <p><code>company</code> is required and must be a string of 160 characters or fewer.</p>
 
       <h2 style={{ marginTop: '28px' }}>Example request</h2>
-      <pre style={codeStyle}>{'curl -X POST https://routeprospect.com/api/o11/prospects \\\n  -H "Authorization: Bearer YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d \'{"company":"HubSpot"}\''}</pre>
+      <pre style={codeStyle}>{'curl -X POST https://routeprospect.com/api/o11/prospects -H "Authorization: Bearer YOUR_API_KEY" -H "Content-Type: application/json" -d \'{"company":"HubSpot"}\''}</pre>
 
       <h2 style={{ marginTop: '28px' }}>Example response</h2>
       <pre style={codeStyle}>{JSON.stringify({
